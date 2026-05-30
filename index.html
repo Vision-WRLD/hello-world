@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vision WRLD | Premium Web Design Agency</title>
+  <meta name="description" content="Vision WRLD builds precision-engineered websites for businesses that mean business. Premium web design, development, and strategy." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+  <!-- Geist Sans + Geist Mono (body + terminal), JetBrains Mono fallback -->
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <!-- General Sans (headlines) -->
+  <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="site.css" />
+  <link rel="stylesheet" href="hero.css" />
+</head>
+<body>
+  <!-- Custom cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- ═══════════════════════════════════════
+       NAVIGATION
+  ═══════════════════════════════════════ -->
+  <!-- Global navbar (shown on inner pages; home uses the hero's own nav) -->
+  <header class="vw-gnav">
+    <a href="#" class="vw-gnav__logo" data-page="home">VISION WRLD<span class="vw-cursor">_</span></a>
+    <nav class="vw-gnav__center" id="vwGnavCenter">
+      <button class="vw-gnav__item" data-page="home">Home</button>
+      <button class="vw-gnav__item" data-page="services">Services</button>
+      <button class="vw-gnav__item" data-page="blog">Blog</button>
+      <button class="vw-gnav__item" data-page="contact">Contact</button>
+    </nav>
+    <button class="vw-gnav__menu" id="vwGnavMenu" aria-label="Toggle menu">MENU</button>
+    <a href="#" class="vw-gnav__quote" data-page="contact">Get a Quote →</a>
+  </header>
+
+
+  <!-- ═══════════════════════════════════════
+       PAGE: HOME
+  ═══════════════════════════════════════ -->
+  <div id="page-home" class="page active">
+
+    <!-- ═══════════════════════════════════════
+         HERO: cinematic, terminal centerpiece
+    ═══════════════════════════════════════ -->
+    <section class="vw-hero" id="vwHero">
+
+      <!-- background video -->
+      <div class="vw-hero__videowrap">
+        <video id="vwHeroVideo" class="vw-hero__video" muted playsinline preload="auto"
+               src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260328_065045_c44942da-53c6-4804-b734-f9e07fc22e08.mp4"></video>
+      </div>
+
+      <!-- centered blurred overlay shape -->
+      <div class="vw-hero__blur" aria-hidden="true"></div>
+
+      <div class="vw-hero__layer">
+
+        <!-- NAVBAR -->
+        <nav class="vw-nav" aria-label="Primary">
+          <a href="#" class="vw-nav__logo" data-page="home" aria-label="Vision WRLD home">
+            <img src="src/assets/logo.png" alt="" onerror="this.style.display='none'" />
+            <span class="vw-nav__word">VISION WRLD<span class="vw-cursor">_</span></span>
+          </a>
+
+          <div class="vw-nav__center" id="vwNavCenter">
+            <button class="vw-nav__item" type="button" data-page="services">Services</button>
+            <button class="vw-nav__item" type="button" data-page="blog">Blog</button>
+            <button class="vw-nav__item" type="button" data-page="contact">Contact</button>
+          </div>
+
+          <button class="vw-nav__menu" id="vwMenu" type="button" aria-label="Toggle menu">MENU</button>
+
+          <a href="#" class="vw-nav__quote" data-page="contact">
+            Get a Quote
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </nav>
+        <div class="vw-nav__divider" aria-hidden="true"></div>
+
+        <!-- HERO CONTENT -->
+        <div class="vw-hero__main">
+          <div class="vw-hero__copy">
+            <h1 class="vw-hero__title">We Build <em>the Web</em></h1>
+            <p class="vw-hero__sub">Custom-built websites for businesses that refuse to look like everyone else.</p>
+            <a href="#" class="vw-hero__cta" data-page="contact">
+              Start a Project
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+
+          <!-- GLASSMORPHIC TERMINAL -->
+          <div class="vw-term-stage" id="vwTermStage">
+            <div class="vw-term liquid-glass" id="vwTerm" role="img" aria-label="Terminal demo for Vision WRLD services">
+              <div class="vw-term__bar">
+                <span class="vw-term__dots"><i></i><i></i><i></i></span>
+                <span class="vw-term__label">vision-wrld - zsh</span>
+              </div>
+              <div class="vw-term__body" id="vwTermBody" aria-hidden="true"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- NEW STUDIO -->
+    <section class="newstudio-section reveal-section">
+      <div class="container">
+        <div class="newstudio liquid-glass" data-tilt>
+          <span class="section-tag mono">// new_studio</span>
+          <h2>New studio. Serious standards.</h2>
+          <p>We're a new studio, and we're not hiding it. That means you get our full attention, sharper pricing, and work we're personally invested in making great, because your site is what builds our name.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHY VISION WRLD -->
+    <section class="why-section reveal-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag mono">// why_vision_wrld</span>
+          <h2>Built different. On purpose.</h2>
+        </div>
+        <div class="cards-grid">
+          <div class="feature-card liquid-glass" data-tilt>
+            <div class="feature-card__n mono">01</div>
+            <div class="feature-card__icon">&lt;/&gt;</div>
+            <h3>Precision-Built</h3>
+            <p>Every line of code is written by hand, not dragged from a template. Your site loads fast and behaves exactly how it should.</p>
+          </div>
+          <div class="feature-card liquid-glass" data-tilt>
+            <div class="feature-card__n mono">02</div>
+            <div class="feature-card__icon">⟳</div>
+            <h3>Conversion-First</h3>
+            <p>We design around one goal: turning visitors into customers. Beautiful is the baseline, results are the point.</p>
+          </div>
+          <div class="feature-card liquid-glass" data-tilt>
+            <div class="feature-card__n mono">03</div>
+            <div class="feature-card__icon">∞</div>
+            <h3>Future-Ready</h3>
+            <p>Built to scale and easy to grow. No platform lock-in, no rebuild needed in two years.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- OUR PROCESS -->
+    <section class="process-section reveal-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag mono">// the_process</span>
+          <h2>From idea to launch.</h2>
+        </div>
+        <div class="process-timeline">
+          <div class="process-step reveal-item">
+            <div class="process-step__num mono">01</div>
+            <div class="process-step__line"></div>
+            <h3>Discovery</h3>
+            <p>We dig into your business, goals, competitors, and audience. No assumptions, only research.</p>
+          </div>
+          <div class="process-step reveal-item">
+            <div class="process-step__num mono">02</div>
+            <div class="process-step__line"></div>
+            <h3>Strategy</h3>
+            <p>Sitemap, user journey, conversion architecture. We plan before we design.</p>
+          </div>
+          <div class="process-step reveal-item">
+            <div class="process-step__num mono">03</div>
+            <div class="process-step__line"></div>
+            <h3>Design</h3>
+            <p>High-fidelity mockups built in your brand. Every pixel approved before a line of code is written.</p>
+          </div>
+          <div class="process-step reveal-item">
+            <div class="process-step__num mono">04</div>
+            <div class="process-step__line"></div>
+            <h3>Build</h3>
+            <p>Clean, semantic code. Optimized for speed, SEO, and accessibility from day one.</p>
+          </div>
+          <div class="process-step reveal-item">
+            <div class="process-step__num mono">05</div>
+            <div class="process-step__line"></div>
+            <h3>Launch</h3>
+            <p>Full QA, device testing, and a smooth handoff. We don't ship until it's perfect.</p>
+          </div>
+          <div class="process-step reveal-item">
+            <div class="process-step__num mono">06</div>
+            <div class="process-step__line"></div>
+            <h3>Grow</h3>
+            <p>Post-launch support, analytics review, and continuous improvement. We're your long-term partner.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BLOG TEASER -->
+    <section class="blog-teaser-section reveal-section">
+      <div class="container">
+        <div class="section-header section-header--row">
+          <div>
+            <span class="section-tag mono">// from_the_journal</span>
+            <h2>Things worth knowing.</h2>
+          </div>
+          <a href="#" class="btn btn--ghost" data-page="blog">View All Posts →</a>
+        </div>
+        <div class="blog-teaser-grid" id="blogTeaserGrid">
+          <!-- populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer__top">
+          <div class="footer__brand">
+            <div class="logo footer__logo">
+              <span class="logo__text">VISION WRLD</span><span class="logo__cursor blink">_</span>
+            </div>
+            <p>Big vision? Let's build its WRLD.</p>
+            <div class="footer__socials">
+              <a href="#" aria-label="GitHub" class="footer__social">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+              </a>
+              <a href="#" aria-label="LinkedIn" class="footer__social">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              </a>
+              <a href="#" aria-label="X / Twitter" class="footer__social">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.91-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              </a>
+              <a href="#" aria-label="Instagram" class="footer__social">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+              </a>
+            </div>
+          </div>
+          <div class="footer__links">
+            <h4 class="mono">PAGES</h4>
+            <a href="#" data-page="home">Home</a>
+            <a href="#" data-page="services">Services</a>
+            <a href="#" data-page="services">Work</a>
+            <a href="#" data-page="blog">Blog</a>
+            <a href="#" data-page="contact">Contact</a>
+          </div>
+          <div class="footer__links">
+            <h4 class="mono">SERVICES</h4>
+            <a href="#" data-page="services">Starter Site</a>
+            <a href="#" data-page="services">Growth Package</a>
+            <a href="#" data-page="services">Pro Build</a>
+            <a href="#" data-page="services">Enterprise</a>
+            <a href="#" data-page="services">Ecommerce</a>
+          </div>
+          <div class="footer__clock-block">
+            <h4 class="mono">LOCAL TIME</h4>
+            <div class="footer__clock mono" id="footerClock">--:--:--</div>
+            <div class="footer__tz mono" id="footerTZ"></div>
+          </div>
+        </div>
+        <div class="footer__bottom">
+          <span>© 2025 Vision WRLD. All rights reserved.</span>
+          <span class="mono footer__status"><span class="status-dot"></span>All systems operational</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PAGE: SERVICES
+  ═══════════════════════════════════════ -->
+  <div id="page-services" class="page">
+    <section class="page-hero page-hero--services">
+      <div class="container">
+        <span class="section-tag mono">// WHAT WE BUILD</span>
+        <h1 class="page-hero__title">
+          <span class="bracket cyan">{</span> What We Build <span class="bracket cyan">}</span>
+        </h1>
+        <p class="page-hero__sub">Every package is a precision-engineered solution.</p>
+      </div>
+    </section>
+
+    <section class="services-section">
+      <div class="container">
+        <div class="scope-estimator">
+          <div class="scope-control">
+            <div class="scope-readout">
+              <div class="scope-tier mono" id="scopeTier">Standard</div>
+              <div class="scope-price" id="scopePrice">$4,700</div>
+            </div>
+            <div class="scope-slider-wrap">
+              <input type="range" id="scopeSlider" class="scope-slider" min="0" max="100" step="1" value="45" aria-label="Project scope" />
+              <div class="scope-stops" aria-hidden="true">
+                <span>Simple</span>
+                <span>Standard</span>
+                <span>Advanced</span>
+                <span>Full Build</span>
+              </div>
+            </div>
+            <a href="#" class="btn btn--filled scope-cta" id="scopeStart" data-page="contact">Start Your Project &rarr;</a>
+          </div>
+
+          <div class="scope-terminal liquid-glass" data-tilt>
+            <div class="vw-term__bar">
+              <span class="vw-term__dots"><i></i><i></i><i></i></span>
+              <span class="vw-term__label">vision-wrld - estimate</span>
+            </div>
+            <div class="vw-term__body" id="scopeTermBody"></div>
+          </div>
+        </div>
+
+        <div class="budget-card liquid-glass">
+          <h3>Working with your budget</h3>
+          <p>These are estimates, not walls. Tell us what you're working with and we'll shape a project that fits. Every business starts somewhere, and we'd rather build something great within your range than price you out.</p>
+          <a href="#" class="btn btn--outline" data-page="contact">Tell us your budget &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag mono">// FAQ</span>
+          <h2>Common Questions</h2>
+        </div>
+        <div class="faq-list">
+          <div class="faq-item">
+            <button class="faq-q">How long does it take to build my website? <span class="faq-arrow">+</span></button>
+            <div class="faq-a"><p>Timelines depend on the package. A Starter Site typically takes 1-2 weeks. Growth and Pro packages run 3-6 weeks. Enterprise and Ecommerce projects are scoped individually but typically 6-12 weeks. We give you an exact timeline during the discovery call.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">Do I own my website once it's built? <span class="faq-arrow">+</span></button>
+            <div class="faq-a"><p>100%. You own every line of code, every asset, and every account we set up on your behalf. We don't hold your site hostage on proprietary platforms. It's yours the moment we hand it over.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">What do I need to provide before we start? <span class="faq-arrow">+</span></button>
+            <div class="faq-a"><p>We'll need your brand assets (logo, colors, fonts if you have them), content (text and images, or we can write or source them for an additional fee), and access to your domain. We walk you through everything in the onboarding call.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">Can you redesign my existing website? <span class="faq-arrow">+</span></button>
+            <div class="faq-a"><p>Yes. Redesigns are one of our specialties. We audit your current site, identify what's working and what isn't, and rebuild with intention. The Growth, Pro, and Enterprise packages all support full redesigns.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">Do you offer ongoing maintenance? <span class="faq-arrow">+</span></button>
+            <div class="faq-a"><p>Yes. All packages include a post-launch support window. After that, we offer monthly maintenance retainers covering updates, security patches, performance monitoring, and content changes. Ask about our retainer options during your discovery call.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">What's the payment structure? <span class="faq-arrow">+</span></button>
+            <div class="faq-a"><p>We typically work on a 50% deposit upfront, 50% on delivery. For larger projects, we can split into three milestone payments. We accept bank transfer, credit card, and crypto (BTC/ETH).</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">Do you work with international clients? <span class="faq-arrow">+</span></button>
+            <div class="faq-a"><p>Absolutely. Our team works with businesses globally. All client communication happens over email, Slack, and Zoom. No timezone is a barrier. We've delivered projects across North America, Europe, and Southeast Asia.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">Why not just use Wix or Squarespace? <span class="faq-arrow">+</span></button>
+            <div class="faq-a"><p>DIY builders are great for hobbies. For a business that wants to rank on Google, load fast, convert visitors, and scale without limitations, custom is the only real choice. Platform lock-in, limited SEO control, generic templates, and monthly fees add up fast. A custom site is a long-term asset, not a subscription.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICES FOOTER -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer__top">
+          <div class="footer__brand">
+            <div class="logo footer__logo">
+              <span class="logo__text">VISION WRLD</span><span class="logo__cursor blink">_</span>
+            </div>
+            <p>Big vision? Let's build its WRLD.</p>
+          </div>
+          <div class="footer__links">
+            <h4 class="mono">PAGES</h4>
+            <a href="#" data-page="home">Home</a>
+            <a href="#" data-page="services">Services</a>
+            <a href="#" data-page="services">Work</a>
+            <a href="#" data-page="blog">Blog</a>
+            <a href="#" data-page="contact">Contact</a>
+          </div>
+          <div class="footer__clock-block">
+            <h4 class="mono">LOCAL TIME</h4>
+            <div class="footer__clock mono" id="footerClock2">--:--:--</div>
+            <div class="footer__tz mono" id="footerTZ2"></div>
+          </div>
+        </div>
+        <div class="footer__bottom">
+          <span>© 2025 Vision WRLD. All rights reserved.</span>
+          <span class="mono footer__status"><span class="status-dot"></span>All systems operational</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PAGE: BLOG
+  ═══════════════════════════════════════ -->
+  <div id="page-blog" class="page">
+    <section class="page-hero">
+      <div class="container">
+        <span class="section-tag mono">// THE JOURNAL</span>
+        <h1 class="page-hero__title">The Vision WRLD Journal</h1>
+        <p class="page-hero__sub">Insights for business owners who take their digital presence seriously.</p>
+      </div>
+    </section>
+
+    <section class="blog-section">
+      <div class="container">
+        <div class="blog-filters" id="blogFilters">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="web-strategy">Web Strategy</button>
+          <button class="filter-btn" data-filter="seo">SEO</button>
+          <button class="filter-btn" data-filter="branding">Branding</button>
+          <button class="filter-btn" data-filter="business">Business</button>
+        </div>
+        <div class="blog-grid" id="blogGrid">
+          <!-- populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer__top">
+          <div class="footer__brand">
+            <div class="logo footer__logo">
+              <span class="logo__text">VISION WRLD</span><span class="logo__cursor blink">_</span>
+            </div>
+            <p>Big vision? Let's build its WRLD.</p>
+          </div>
+          <div class="footer__links">
+            <h4 class="mono">PAGES</h4>
+            <a href="#" data-page="home">Home</a>
+            <a href="#" data-page="services">Services</a>
+            <a href="#" data-page="services">Work</a>
+            <a href="#" data-page="blog">Blog</a>
+            <a href="#" data-page="contact">Contact</a>
+          </div>
+          <div class="footer__clock-block">
+            <h4 class="mono">LOCAL TIME</h4>
+            <div class="footer__clock mono" id="footerClock3">--:--:--</div>
+          </div>
+        </div>
+        <div class="footer__bottom">
+          <span>© 2025 Vision WRLD. All rights reserved.</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PAGE: BLOG POST
+  ═══════════════════════════════════════ -->
+  <div id="page-post" class="page">
+    <div class="reading-progress-bar" id="readingProgress"></div>
+    <div class="container">
+      <div class="post-layout">
+        <div class="post-back">
+          <a href="#" class="btn btn--ghost" data-page="blog">← Back to Journal</a>
+        </div>
+        <article class="post-body" id="postBody">
+          <!-- populated by JS -->
+        </article>
+        <div class="post-related" id="postRelated">
+          <!-- populated by JS -->
+        </div>
+      </div>
+    </div>
+    <footer class="footer">
+      <div class="container">
+        <div class="footer__bottom">
+          <span>© 2025 Vision WRLD. All rights reserved.</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PAGE: CONTACT
+  ═══════════════════════════════════════ -->
+  <div id="page-contact" class="page">
+    <canvas id="particleCanvas" aria-hidden="true"></canvas>
+    <section class="contact-hero">
+      <div class="container">
+        <span class="section-tag mono">// START A PROJECT</span>
+        <h1 class="page-hero__title">Let's Build<br>Something.</h1>
+        <p class="page-hero__sub">Tell us about your project and we'll be in touch within 24 hours.</p>
+      </div>
+    </section>
+
+    <section class="contact-main">
+      <div class="container">
+        <div class="contact-grid">
+          <!-- FORM -->
+          <div class="contact-form-wrap">
+            <form class="contact-form" id="contactForm" novalidate>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="mono" for="name">Your Name *</label>
+                  <input type="text" id="name" name="name" placeholder="Alex Johnson" required />
+                </div>
+                <div class="form-group">
+                  <label class="mono" for="bizname">Business Name *</label>
+                  <input type="text" id="bizname" name="bizname" placeholder="Acme Corp" required />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="mono" for="email">Email *</label>
+                  <input type="email" id="email" name="email" placeholder="alex@acmecorp.com" required />
+                </div>
+                <div class="form-group">
+                  <label class="mono" for="phone">Phone (optional)</label>
+                  <input type="tel" id="phone" name="phone" placeholder="+1 (555) 000-0000" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="mono" for="need">What do you need? *</label>
+                <div class="select-wrap">
+                  <select id="need" name="need" required>
+                    <option value="">Select an option...</option>
+                    <option value="new">New Website</option>
+                    <option value="redesign">Redesign</option>
+                    <option value="ecommerce">Ecommerce</option>
+                    <option value="notsure">Not Sure Yet</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="mono" for="about">Tell us about your business *</label>
+                <textarea id="about" name="about" rows="4" placeholder="What does your business do? Who are your customers? What's your main goal with a new website?" required></textarea>
+              </div>
+              <div class="form-group">
+                <label class="mono" for="budget">Budget Range: <span id="budgetDisplay" class="cyan">$2,500</span></label>
+                <div class="range-wrap">
+                  <input type="range" id="budget" name="budget" min="300" max="10000" step="100" value="2500" />
+                  <div class="range-labels mono">
+                    <span>$300</span><span>$10,000+</span>
+                  </div>
+                </div>
+              </div>
+              <!-- Web3Forms honeypot: hidden from humans, traps bots -->
+              <input type="checkbox" name="botcheck" id="botcheck" style="display:none !important" tabindex="-1" autocomplete="off" aria-hidden="true" />
+              <button type="submit" class="btn btn--filled btn--submit" id="submitBtn">
+                <span class="btn-text">Send It →</span>
+                <span class="btn-loader" aria-hidden="true"></span>
+              </button>
+              <div class="form-error" id="formError" role="alert"></div>
+              <div class="form-success" id="formSuccess" aria-live="polite">
+                <span class="mono cyan">✓ Message received.</span> We'll be in touch within 24 hours.
+              </div>
+            </form>
+          </div>
+
+          <!-- CONTACT INFO -->
+          <div class="contact-info">
+            <div class="contact-info__block">
+              <div class="contact-info__item">
+                <span class="mono cyan">EMAIL</span>
+                <a href="mailto:hello@visionwrld.com">hello@visionwrld.com</a>
+              </div>
+              <div class="contact-info__item">
+                <span class="mono cyan">RESPONSE TIME</span>
+                <p>We reply within 24 hours, usually faster.</p>
+              </div>
+              <div class="contact-info__item">
+                <span class="mono cyan">LOCATION</span>
+                <div class="location-block">
+                  <div class="location-map">
+                    <div class="location-map__grid" aria-hidden="true"></div>
+                    <div class="location-map__dot"></div>
+                    <div class="location-map__pulse"></div>
+                    <span class="mono location-map__label">Remote-first. Global reach.</span>
+                  </div>
+                </div>
+              </div>
+              <a href="#" class="btn btn--outline discovery-btn" data-page="contact">Book a Free Discovery Call →</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trust strip -->
+        <div class="trust-strip">
+          <div class="trust-badge"><span class="trust-icon">🔒</span><span>SSL Secured</span></div>
+          <div class="trust-badge"><span class="trust-icon">⚡</span><span>Response in 24hrs</span></div>
+          <div class="trust-badge"><span class="trust-icon">☕</span><span>Free Consultation</span></div>
+          <p class="trust-note mono">" No spam. No pressure. Just a real conversation about your business. "</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer__top">
+          <div class="footer__brand">
+            <div class="logo footer__logo">
+              <span class="logo__text">VISION WRLD</span><span class="logo__cursor blink">_</span>
+            </div>
+          </div>
+          <div class="footer__links">
+            <h4 class="mono">PAGES</h4>
+            <a href="#" data-page="home">Home</a>
+            <a href="#" data-page="services">Services</a>
+            <a href="#" data-page="services">Work</a>
+            <a href="#" data-page="blog">Blog</a>
+            <a href="#" data-page="contact">Contact</a>
+          </div>
+          <div class="footer__clock-block">
+            <h4 class="mono">LOCAL TIME</h4>
+            <div class="footer__clock mono" id="footerClock4">--:--:--</div>
+          </div>
+        </div>
+        <div class="footer__bottom">
+          <span>© 2025 Vision WRLD. All rights reserved.</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       VERO AI CHAT
+  ═══════════════════════════════════════ -->
+  <div class="vero-widget" id="veroWidget">
+    <div class="vero-chat" id="veroChat">
+      <div class="vero-header">
+        <div class="vero-header__left">
+          <div class="vero-avatar"><!-- hex+globe injected by site.js --></div>
+          <div>
+            <div class="vero-name mono">ATLAS · Vision WRLD Assistant</div>
+            <div class="vero-status mono"><span class="status-dot"></span>Online</div>
+          </div>
+        </div>
+        <button class="vero-close" id="veroClose" aria-label="Close chat">×</button>
+      </div>
+      <div class="vero-messages" id="veroMessages"></div>
+      <div class="vero-input-wrap">
+        <input type="text" class="vero-input" id="veroInput" placeholder="Ask me anything..." autocomplete="off" />
+        <button class="vero-send" id="veroSend" aria-label="Send message">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
+        </button>
+      </div>
+    </div>
+    <button class="vero-toggle" id="veroToggle" aria-label="Open ATLAS AI assistant"><!-- hex+globe injected by site.js --></button>
+  </div>
+
+  <!-- Page transition overlay -->
+  <div class="page-transition" id="pageTransition"></div>
+
+  <script src="site.js"></script>
+  <script src="hero.js"></script>
+</body>
+</html>

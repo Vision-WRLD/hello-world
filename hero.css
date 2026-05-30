@@ -1,0 +1,357 @@
+/* ══════════════════════════════════════════════════════════════
+   VISION WRLD - cinematic hero module (self-contained, namespaced)
+   All rules scoped under .vw-hero / .vw-* so they never collide
+   with the legacy style.css systems already in this repo.
+   ══════════════════════════════════════════════════════════════ */
+
+.vw-hero {
+  /* theme tokens (HSL spec from brief) */
+  --vw-bg:        hsl(260 87% 3%);
+  --vw-fg:        hsl(40 6% 95%);
+  --vw-sub:       hsl(40 6% 82%);
+  --vw-cyan:      hsl(186 100% 50%);
+  --vw-cyan-rgb:  0, 234, 255;
+  --vw-green:     #39ff14;
+  --vw-indigo:    #6366f1;
+  --vw-line:      rgba(255, 255, 255, 0.10);
+
+  --vw-sans:  'Geist', 'Geist Sans', system-ui, sans-serif;
+  --vw-disp:  'General Sans', 'Geist', sans-serif;
+  --vw-mono:  'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;            /* let the blur shape bleed */
+  background: var(--vw-bg);
+  color: var(--vw-fg);
+  font-family: var(--vw-sans);
+  isolation: isolate;
+}
+
+/* ─── background video (behind everything) ─── */
+.vw-hero__videowrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+.vw-hero__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;                   /* JS rAF fade loop drives this */
+  will-change: opacity;
+}
+
+/* ─── centered blurred overlay shape ─── */
+.vw-hero__blur {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 984px;
+  height: 527px;
+  max-width: 96vw;
+  transform: translate(-50%, -50%);
+  background: #030208;          /* gray-950-ish, deep */
+  opacity: 0.9;
+  filter: blur(82px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* everything readable sits above */
+.vw-hero__layer { position: relative; z-index: 10; display: flex; flex-direction: column; flex: 1; min-height: 100svh; }
+
+/* ════════ NAVBAR ════════ */
+.vw-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 20px 32px;
+}
+.vw-nav__logo { display: inline-flex; align-items: center; gap: 10px; }
+.vw-nav__logo img { height: 32px; width: auto; display: block; }
+.vw-nav__word {
+  font-family: var(--vw-disp);
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+  color: var(--vw-fg);
+}
+.vw-cursor { color: var(--vw-cyan); font-weight: 400; }
+
+.vw-nav__center { display: flex; align-items: center; gap: 6px; }
+.vw-nav__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 14px;
+  font-size: 0.94rem;
+  color: rgba(245, 243, 240, 0.9);
+  border-radius: 8px;
+  transition: color 0.22s ease, background 0.22s ease;
+}
+.vw-nav__item:hover { color: var(--vw-fg); background: rgba(255, 255, 255, 0.04); }
+.vw-nav__item svg { width: 14px; height: 14px; opacity: 0.7; }
+
+.vw-nav__quote {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--vw-fg);
+  border: 1px solid var(--vw-line);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+}
+.vw-nav__quote:hover {
+  border-color: rgba(var(--vw-cyan-rgb), 0.6);
+  box-shadow: 0 0 22px -4px rgba(var(--vw-cyan-rgb), 0.45);
+  background: rgba(var(--vw-cyan-rgb), 0.05);
+}
+.vw-nav__menu { display: none; }   /* mobile MENU text button, no hamburger */
+
+/* divider under navbar */
+.vw-nav__divider {
+  height: 1px;
+  margin-top: 3px;
+  background: linear-gradient(to right, transparent, rgba(245, 243, 240, 0.2), transparent);
+}
+
+/* ════════ HERO CONTENT ════════ */
+.vw-hero__main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(32px, 5vw, 72px);
+  padding: clamp(32px, 5vw, 56px) 48px;
+  flex-wrap: wrap;
+}
+.vw-hero__copy { flex: 1 1 460px; max-width: 720px; min-width: 300px; }
+
+.vw-hero__title {
+  font-family: var(--vw-disp);
+  font-weight: 400;
+  font-size: clamp(3.4rem, 11vw, 200px);
+  line-height: 1.02;
+  letter-spacing: -0.024em;
+  color: var(--vw-fg);
+}
+.vw-hero__title em {
+  font-style: normal;
+  background-image: linear-gradient(to left, #00f5ff, #6366f1, #39ff14);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.vw-hero__sub {
+  color: var(--vw-sub);
+  font-size: 1.125rem;
+  line-height: 2rem;
+  max-width: 28rem;
+  margin-top: 9px;
+  opacity: 0.8;
+}
+
+.vw-hero__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 25px;
+  padding: 24px 29px;
+  border-radius: 12px;
+  font-family: var(--vw-disp);
+  font-weight: 500;
+  font-size: 1rem;
+  color: var(--vw-fg);
+  border: 1px solid var(--vw-line);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease, background 0.3s ease;
+}
+.vw-hero__cta:hover {
+  border-color: rgba(var(--vw-cyan-rgb), 0.6);
+  box-shadow: 0 0 40px -6px rgba(var(--vw-cyan-rgb), 0.5);
+  background: rgba(var(--vw-cyan-rgb), 0.06);
+  transform: translateY(-2px);
+}
+.vw-hero__cta svg { width: 16px; height: 16px; transition: transform 0.3s ease; }
+.vw-hero__cta:hover svg { transform: translateX(3px); }
+
+/* ════════ GLASSMORPHIC TERMINAL ════════ */
+.vw-term-stage {
+  flex: 1 1 520px;
+  min-width: 300px;
+  max-width: 560px;
+  perspective: 1200px;
+}
+.vw-term {
+  width: 100%;
+  border-radius: 12px;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 0.18s ease-out;
+  box-shadow: 0 0 60px -10px rgba(0, 245, 255, 0.25);
+}
+
+/* the liquid-glass utility (verbatim from brief) */
+.liquid-glass {
+  background: rgba(255, 255, 255, 0.01);
+  background-blend-mode: luminosity;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: none;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+.liquid-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(255, 255, 255, 0.15) 20%,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0) 60%,
+    rgba(255, 255, 255, 0.15) 80%,
+    rgba(255, 255, 255, 0.45) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+          mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+}
+
+.vw-term__bar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.vw-term__dots { display: inline-flex; gap: 7px; }
+.vw-term__dots i { width: 11px; height: 11px; border-radius: 50%; opacity: 0.55; }
+.vw-term__dots i:nth-child(1) { background: #ff5f57; }
+.vw-term__dots i:nth-child(2) { background: #febc2e; }
+.vw-term__dots i:nth-child(3) { background: #28c840; }
+.vw-term__label {
+  grid-column: 2;
+  font-family: var(--vw-mono);
+  font-size: 0.78rem;
+  color: rgba(245, 243, 240, 0.55);
+  white-space: nowrap;
+}
+
+.vw-term__body {
+  font-family: var(--vw-mono);
+  font-size: 0.86rem;
+  line-height: 1.7;
+  padding: 20px 22px 26px;
+  min-height: 340px;
+  color: var(--vw-fg);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.vw-term__body .ln { display: block; min-height: 1.7em; }
+.vw-tok-prompt { color: var(--vw-cyan); }
+.vw-tok-out    { color: rgba(245, 243, 240, 0.92); }
+.vw-tok-key    { color: var(--vw-green); }
+.vw-tok-str    { color: rgba(245, 243, 240, 0.6); }
+.vw-tok-punct  { color: rgba(245, 243, 240, 0.45); }
+.vw-tok-ok     { color: var(--vw-green); }
+
+.vw-caret {
+  display: inline-block;
+  width: 0.6ch;
+  color: var(--vw-cyan);
+  animation: vw-blink 1s steps(1) infinite;
+}
+@keyframes vw-blink { 50% { opacity: 0; } }
+
+/* ════════ LOGO MARQUEE ════════ */
+.vw-marquee-wrap { padding-bottom: 40px; }
+.vw-marquee {
+  max-width: 64rem;          /* max-w-5xl */
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 48px;                  /* gap-12 between text and marquee */
+  padding: 0 32px;
+}
+.vw-marquee__label {
+  flex-shrink: 0;
+  color: rgba(245, 243, 240, 0.5);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+.vw-marquee__viewport {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+          mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
+.vw-marquee__track {
+  display: flex;
+  align-items: center;
+  gap: 64px;                  /* gap-16 between logos */
+  width: max-content;
+  animation: vw-scroll 20s linear infinite;
+}
+@keyframes vw-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.vw-logo { display: inline-flex; align-items: center; gap: 12px; }
+.vw-logo__icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-family: var(--vw-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--vw-fg);
+}
+.vw-logo__name { font-size: 1rem; font-weight: 600; color: var(--vw-fg); }
+
+/* ════════ RESPONSIVE ════════ */
+@media (max-width: 900px) {
+  .vw-nav__center { display: none; }
+  .vw-nav__menu {
+    display: inline-flex;
+    font-family: var(--vw-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    color: var(--vw-fg);
+    padding: 8px 12px;
+  }
+  .vw-hero__main { flex-direction: column; text-align: left; }
+  .vw-term-stage { order: 2; width: 100%; }
+}
+@media (max-width: 640px) {
+  .vw-nav, .vw-hero__main, .vw-marquee { padding-left: 20px; padding-right: 20px; }
+  .vw-marquee { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .vw-marquee__label { text-align: left; }
+}
+
+/* ════════ REDUCED MOTION ════════ */
+@media (prefers-reduced-motion: reduce) {
+  .vw-marquee__track { animation: none; }
+  .vw-caret { animation: none; }
+  .vw-term { transition: none; transform: none; }
+  .vw-hero__video { opacity: 0.35; }   /* static, gently visible */
+}
