@@ -8,7 +8,7 @@
 
 // Current free-tier flash model. If Google retires it, change this one line
 // (e.g. 'gemini-2.0-flash-001' or 'gemini-1.5-flash').
-const MODEL = 'gemini-2.0-flash';
+const MODEL = 'gemini-2.0-flash-lite';
 
 // --- simple per-IP rate limit (best-effort, in-memory per worker isolate) ---
 const RATE_LIMIT = 15;        // max requests...
