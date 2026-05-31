@@ -104,7 +104,10 @@ STYLE: Conversational, warm, and concise — usually 2-5 sentences, but go longe
 
 Test: 'how do I grow my business?' → real, practical growth advice (with a natural tie-in to online presence if it fits). 'what makes a good logo?' → actual branding advice. 'I need a website' → lean into Vision WRLD.`;
 
-  const ATLAS_ENDPOINT = '/api/atlas'; // proxy that injects the Anthropic key server-side
+  const ATLAS_ENDPOINT = '/api/atlas'; // Cloudflare function -> Gemini (when enabled)
+  // Canned mode: ATLAS answers from a built-in knowledge base, no API, no cost, no quota.
+  // Flip to true once a Gemini key with available quota/credits is wired up.
+  const ATLAS_USE_API = false;
 
   /* ════════════════ ROUTER ════════════════ */
   const PAGES = ['home', 'services', 'blog', 'post', 'contact'];
@@ -538,16 +541,16 @@ Test: 'how do I grow my business?' → real, practical growth advice (with a nat
       bubble('user', text);
       history.push({ role: 'user', content: text });
       const t = typing();
-      try {
-        const reply = await callAtlas(history);
-        t.remove(); bubble('bot', reply);
-        history.push({ role: 'assistant', content: reply });
-      } catch (err) {
-        t.remove();
-        const fb = localAtlas(text);
-        bubble('bot', fb);
-        history.push({ role: 'assistant', content: fb });
+      let reply;
+      if (ATLAS_USE_API) {
+        try { reply = await callAtlas(history); }
+        catch (err) { reply = localAtlas(text); }
+      } else {
+        reply = localAtlas(text);
+        await new Promise(r => setTimeout(r, 360 + Math.random() * 420)); // natural pause
       }
+      t.remove(); bubble('bot', reply);
+      history.push({ role: 'assistant', content: reply });
     }
     const submit = () => { const v = input.value.trim(); if (!v) return; input.value = ''; ask(v); };
     send.addEventListener('click', submit);
@@ -573,50 +576,172 @@ Test: 'how do I grow my business?' → real, practical growth advice (with a nat
     return text;
   }
 
-  // Demo fallback when no proxy is wired up yet. Pattern-based, but it answers
-  // general questions directly and only leans into Vision WRLD when relevant.
+  // ── Canned knowledge engine ───────────────────────────────────────────
+  // Scores the message against many topics (each matching lots of phrasings)
+  // and returns the best answer. No API, no cost, no quota. Handles the real
+  // questions a web studio's visitors ask, plus small talk and live date/time.
+  const ATLAS_KB = [
+    // ---------- studio / about ----------
+    { keys: ['who are you', 'what are you', 'your name', 'are you a bot', 'are you ai', 'are you a robot', 'are you human', 'are you real', 'who am i talking to', 'are you a person'],
+      reply: "I'm ATLAS, the assistant here at Vision WRLD, a web design and development studio. I'm an automated helper, but a genuinely useful one. Ask me about what we build, pricing, timelines, getting your business online, or general business questions." },
+    { keys: ['vision wrld', 'about you', 'tell me about', 'what is this', 'who are you guys', 'your company', 'your studio', 'what is vision'],
+      reply: "Vision WRLD is a web design and development studio. We build custom, fast, conversion-focused websites for businesses that take their online presence seriously. We're a new studio, which means you get our full attention and sharper pricing." },
+    { keys: ['how long have you', 'years', 'experience', 'established', 'new studio', 'how new', 'track record', 'been in business', 'how old', 'since when'],
+      reply: "We're a new studio, and we're upfront about it. The upside for you: full attention, sharper pricing, and work we're personally invested in, because your site is what builds our name." },
+    { keys: ['why you', 'why vision', 'why should i', 'what makes you different', 'why choose', 'what sets you apart', 'why work with', 'what makes you special', 'why not someone else'],
+      reply: "Because we build around your actual goals, not a template: custom design, fast load times, real SEO foundations, and something built to scale instead of something you'll outgrow and rebuild. As a new studio, you also get our full focus." },
+    { keys: ['where are you', 'located', 'location', 'based', 'your office', 'what country', 'where based', 'remote', 'in person'],
+      reply: "We're remote-first with global reach, so we work with businesses wherever they are. Everything happens over email, calls, and shared docs, no timezone is a dealbreaker." },
+    { keys: ['portfolio', 'examples', 'your work', 'previous work', 'case studies', 'show me work', 'samples', 'past projects', 'work you have done', 'see your work'],
+      reply: "Check the Work section in the menu for a look at what we build. As a new studio our public list is still growing, but every project is custom, and we're happy to walk you through our approach on a quick call." },
+    { keys: ['legit', 'trust', 'scam', 'real company', 'safe', 'reliable', 'can i trust', 'are you trustworthy'],
+      reply: "Fair thing to ask anyone online. We're a real studio, you own everything we build, and we work in clear milestones so you always see progress. Book a free consultation on the Contact page and judge for yourself, no pressure." },
+
+    // ---------- services ----------
+    { keys: ['what do you do', 'what do you guys do', 'you guys do', 'services', 'what can you build', 'what do you offer', 'what you do', 'offerings', 'what you make', 'what do you make', 'you make', 'help me with', 'provide', 'offer', 'what can you do for'],
+      reply: "We design and build custom websites: brand-new sites, redesigns, and online stores, plus the SEO and performance work that makes them actually perform. Tell me what your business needs and I'll point you to the right starting place." },
+    { keys: ['build a website', 'need a website', 'need a site', 'new website', 'new site', 'want a website', 'want a site', 'a new site', 'make a website', 'make me a', 'create a website', 'website for', 'build me a', 'site for', 'site for my'],
+      reply: "That's exactly what we do. We build custom sites designed around your goals: fast, unique, and built to convert. Tell me a bit about your business, or head to the Services page to shape a quote and the Contact page to book a free consultation." },
+    { keys: ['redesign', 'rebuild', 'revamp', 'update my site', 'refresh my site', 'my site is old', 'website is old', 'site is old', 'old website', 'outdated', 'looks dated', 'modernize', 'redo my website'],
+      reply: "Redesigns are one of our specialties. We audit what's working and what isn't, then rebuild with intention: faster, cleaner, and built to convert. You keep everything we make." },
+    { keys: ['ecommerce', 'online store', 'sell online', 'sell products', 'shop', 'store', 'checkout', 'shopping cart', 'sell stuff', 'product page'],
+      reply: "Yes, we build full online stores: product management, secure checkout, payments, and a storefront designed to actually sell. We'll scope it to your catalog and goals on the Contact page." },
+    { keys: ['maintenance', 'support', 'after launch', 'updates', 'maintain', 'keep it updated', 'ongoing', 'retainer', 'fix things later'],
+      reply: "Every build includes a post-launch support window, and we offer ongoing maintenance after that: updates, security, performance checks, and content changes. You're never left on your own once it's live." },
+    { keys: ['hosting', 'host', 'domain', 'dns', 'where is it hosted', 'server', 'buy a domain'],
+      reply: "We'll guide you through hosting and your domain so it's fast and reliable, and set it all up on accounts you own. No lock-in, no mystery, it's yours." },
+    { keys: ['edit it myself', 'update content', 'cms', 'change text', 'add a blog', 'blog', 'blog post', 'add blog', 'manage content', 'update it myself', 'make changes myself', 'edit my own'],
+      reply: "Absolutely. We can build it on a CMS so you can update text, images, and blog posts yourself without touching code. We'll show you how during handover." },
+    { keys: ['copywriting', 'content', 'write the text', 'who writes', 'wording', 'write content', 'do you write'],
+      reply: "We can help with content, from polishing what you have to writing it from scratch for an additional fee. Good copy is half of what makes a page convert, so it's worth getting right." },
+    { keys: ['app', 'mobile app', 'ios', 'android', 'build an app'],
+      reply: "Our focus is websites and web apps rather than native iOS or Android apps. If you need something app-like, a fast installable web experience often does the job, happy to talk it through on a call." },
+    { keys: ['seo', 'rank', 'ranking', 'search engine', 'get found', 'found on google', 'show up on google', 'rank on google', 'first page of google', 'keywords', 'google search'],
+      reply: "SEO starts with the fundamentals: fast load times, clean structure, and pages that answer the real questions your customers search for. We build that in from day one rather than bolting it on afterward. Pair it with a Google Business Profile and real reviews and you'll climb for most local searches. There's a primer in our Journal if you want the basics." },
+
+    // ---------- pricing ----------
+    { keys: ['price', 'pricing', 'cost', 'how much', 'budget', 'quote', 'estimate', 'expensive', 'cheap', 'rates', 'fees', 'afford', 'how much do you charge'],
+      reply: "Pricing scales with scope, from around $300 for something simple up to $10,000 for a full build. The Services page has a live slider, drag it to your scope and it shows an instant estimate. We'll always try to shape something that fits your budget." },
+    { keys: ['payment plan', 'deposit', 'installments', 'pay in', 'financing', 'split the cost', 'upfront', 'milestone', 'pay monthly'],
+      reply: "We usually work on a deposit upfront and the balance on delivery, and we can split larger projects into milestone payments. We'll lay it all out clearly before anything starts." },
+    { keys: ['discount', 'deal', 'cheaper', 'lower price', 'negotiate', 'any offers', 'reduce the price'],
+      reply: "We keep pricing sharp as a new studio rather than running gimmicky discounts. Tell us your budget on the Contact page, we'd rather shape a great project that fits than price you out." },
+
+    // ---------- process / timeline / getting started ----------
+    { keys: ['how does it work', 'process', 'steps', 'how do you work', 'what happens', 'workflow', 'stages', 'your process'],
+      reply: "Six steps: Discovery, Strategy, Design, Build, Launch, then Grow. You can see them on the homepage. In short: we learn your business, plan it, design it for your approval, build it clean and fast, launch it, and support it after." },
+    { keys: ['how long', 'timeline', 'turnaround', 'how fast', 'deadline', 'when can', 'time frame', 'take to build', 'how quickly', 'how soon'],
+      reply: "It depends on scope: a simple site is usually a week or two, mid-size builds a few weeks, and bigger projects are scoped on the first call. You'll get an exact timeline up front, no vague promises." },
+    { keys: ['get started', 'start a project', 'first step', 'how do i begin', 'what do you need from me', 'what do i provide', 'how do we start', 'sign up', 'begin', 'kick off', 'next step'],
+      reply: "Easiest first step: book a free consultation on the Contact page, or drag the slider on Services to estimate your scope. To start we'll need your brand basics, your content (or we can help create it), and access to your domain. We walk you through all of it." },
+    { keys: ['revisions', 'changes', 'rounds', 'edits', 'tweaks', 'feedback', 'how many changes', 'change my mind'],
+      reply: "Revisions are built into the design phase, we refine until you're happy with the direction before we write a line of code. We agree the scope of rounds up front so there are no surprises." },
+    { keys: ['own the site', 'ownership', 'do i own', 'who owns', 'my code', 'keep the code', 'is it mine'],
+      reply: "You own all of it: every line of code, every asset, every account we set up for you. We don't hold your site hostage on a proprietary platform. The moment we hand over, it's yours." },
+
+    // ---------- tech ----------
+    { keys: ['mobile', 'responsive', 'phone', 'tablet', 'mobile friendly', 'works on phones', 'small screen', 'on my phone'],
+      reply: "Every site we build is mobile-first and fully responsive: it looks and works great on phones, tablets, and desktops. More than half your visitors are on mobile, so we design for them first." },
+    { keys: ['fast', 'speed', 'slow', 'performance', 'load time', 'loading', 'lighthouse', 'page speed', 'quick to load'],
+      reply: "Speed is a priority. We hand-write clean code and optimize assets so pages load fast. It matters: every extra second of load time measurably costs you conversions and SEO." },
+    { keys: ['what platform', 'templates', 'tech stack', 'framework', 'do you use templates', 'custom code', 'technology', 'what do you build with'],
+      reply: "We build custom, no drag-and-drop templates. That's what keeps your site fast, unique, and free of platform lock-in. We pick the right tech for the project and you own the result." },
+    { keys: ['accessibility', 'accessible', 'ada', 'wcag', 'screen reader', 'disabilities'],
+      reply: "We build with accessibility in mind: proper structure, contrast, and keyboard support, so more people can use your site and you stay on the right side of the rules. It helps SEO too." },
+    { keys: ['secure', 'security', 'ssl', 'https', 'hacked', 'safe site'],
+      reply: "Security basics are standard with every build: HTTPS/SSL, clean code, and sensible protections. For stores we add the right payment-grade security on top." },
+    { keys: ['analytics', 'tracking', 'google analytics', 'metrics', 'traffic stats', 'measure visitors'],
+      reply: "We can set up analytics so you see real numbers: where visitors come from, what they do, and what's converting. Decisions get a lot easier when you can actually measure them." },
+    { keys: ['migrate', 'move my site', 'transfer', 'switch from', 'import my', 'moving from'],
+      reply: "We can migrate your existing site, content, and domain over cleanly, with care to preserve your SEO so you don't lose rankings in the move. It's a common part of a redesign." },
+
+    // ---------- contact ----------
+    { keys: ['contact', 'get in touch', 'reach you', 'email', 'phone', 'call you', 'talk to someone', 'speak to', 'message you', 'book a call', 'consultation', 'discovery call', 'free consult', 'how do i reach'],
+      reply: "Head to the Contact page to send us a message or book a free discovery call, we reply within 24 hours, usually faster. No spam, no pressure, just a real conversation about your business." },
+
+    // ---------- DIY builders / do I need a site ----------
+    { keys: ['wix', 'squarespace', 'webflow', 'godaddy', 'wordpress', 'shopify', 'base44', 'site builder', 'builder', 'diy', 'do it myself', 'build it myself'],
+      reply: "Those builders are fine for a hobby, a quick test, or a tight budget. The catch is they get slow and generic as you grow, limit your SEO, and lock you in, so a lot of businesses end up paying to rebuild later. A custom Vision WRLD site is built around your goals and scales without that rebuild, it's the difference between renting a template and owning something built for you." },
+    { keys: ['do i need a website', 'why a website', 'need a site', 'website worth it', 'is a website worth', 'do i even need'],
+      reply: "For almost any business, yes. It's the first thing people check before they buy, and it's the one piece of marketing you actually own, unlike a social account that can change the rules overnight. A fast, credible site earns trust before you ever speak to a customer." },
+
+    // ---------- business advice ----------
+    { keys: ['grow my business', 'grow the business', 'scale my business', 'more sales', 'increase sales', 'grow my company', 'business growth', 'how do i grow', 'expand my business'],
+      reply: "A few things move the needle most: nail down who your best customer is and speak directly to them, make it effortless to find and buy from you, and turn happy customers into repeat buyers and referrals. Get the basics of being found right too: a Google Business Profile, real reviews, and a fast website that converts the traffic you already get. That last part is where a lot of growth quietly leaks, and it's exactly what we help with." },
+    { keys: ['more customers', 'get customers', 'find customers', 'attract customers', 'advertise', 'advertising', 'leads', 'get clients', 'new clients', 'bring in customers'],
+      reply: "Start where your customers already are: claim and optimize your Google Business Profile, ask every happy customer for a review, and post consistently on the one channel your audience actually uses. Referrals and partnerships with complementary local businesses are underrated and free. Then make sure your website turns that attention into enquiries: fast load, clear offer, one obvious call to action." },
+    { keys: ['marketing', 'market my business', 'promote', 'how do i market'],
+      reply: "Keep it focused: be findable (Google Business Profile, reviews, basic SEO), be consistent on one channel your customers use, and lean on referrals. The piece people skip is the destination, all that effort should send people to a website that actually converts, not a dead-end. Cheap to start, compounding over time." },
+    { keys: ['logo', 'brand', 'branding', 'brand identity', 'visual identity', 'logo design', 'good logo'],
+      reply: "A good logo is simple, legible at any size, and works in one color, skip the gradients and tiny detail. But a logo is the smallest part of a brand: consistency is what people remember. Pick one or two fonts, a tight palette, and a clear voice, then use them everywhere, especially your website, where people judge you hardest." },
+    { keys: ['social media', 'instagram', 'facebook', 'tiktok', 'linkedin', 'posting', 'social'],
+      reply: "Pick one platform where your customers actually hang out and do it well rather than being mediocre on five. Post consistently, show the real work and the people behind it, and always give a clear next step. Remember social profiles are rented land, send that audience back to something you own: your website, where you control the experience and can convert them." },
+    { keys: ['should i charge', 'how much should i charge', 'price my', 'pricing my products', 'what to charge', 'set my prices', 'what should i charge'],
+      reply: "Price on the value you deliver, not just your costs or what competitors charge. Offer a clear good / better / best so most people pick the middle, and don't be afraid to be the premium option if your work backs it up. Show the value (results, proof, testimonials) and the price feels fair, a polished website does a lot of that justifying for you." },
+    { keys: ['stand out', 'differentiate', 'competitors', 'competition', 'beat my competitor', 'outcompete', 'unique selling'],
+      reply: "Pick a real point of difference and lean into it hard: a specific niche, a standout guarantee, faster turnaround, or a level of craft others skip. Be known for one thing rather than vaguely good at everything. Then make that difference obvious the second someone lands on your website, that's where most businesses blur into the competition by looking like a template." },
+    { keys: ['reviews', 'testimonials', 'get reviews', 'more reviews', 'google reviews'],
+      reply: "Reviews are some of the cheapest, most powerful marketing you have. Just ask, every happy customer, right after the win, with a direct link to your Google profile. Then show the best ones on your website near your calls to action, social proof at the moment of decision lifts conversions a lot." },
+
+    // ---------- small talk ----------
+    { keys: ['hi', 'hello', 'hey', 'yo', 'hiya', 'howdy', 'sup', 'greetings', 'good morning', 'good afternoon', 'good evening'],
+      reply: ["Hey! Good to see you. What can I help you with?", "Hi there! What can I help you with today?", "Hey! What are you working on?"] },
+    { keys: ['how are you', 'hows it going', 'how is it going', 'you good', 'how you doing', 'whats up', 'what is up', 'how are things'],
+      reply: "Doing great, thanks! What's on your mind?" },
+    { keys: ['thanks', 'thank you', 'cheers', 'ty', 'appreciate it', 'appreciated', 'thx'],
+      reply: ["Anytime! Anything else I can help with?", "You're welcome! Happy to help with anything else.", "No problem at all, what else can I do?"] },
+    { keys: ['bye', 'goodbye', 'see you', 'later', 'cya', 'take care', 'gotta go', 'see ya'],
+      reply: "Take care! Whenever you're ready, the Contact page is the fastest way to start a project. 👋" },
+    { keys: ['joke', 'funny', 'make me laugh', 'tell me a joke'],
+      reply: "Why did the web developer leave the restaurant? The table layout was a mess. I'll stick to building sites. Anything I can help you with?" },
+    { keys: ['help', 'help me', 'i need help', 'what can you do', 'how can you help', 'what can i ask', 'what do you know', 'menu', 'options'],
+      reply: "I can help with what Vision WRLD builds, pricing, timelines, our process, getting your business online, SEO, and general business questions like growth and marketing. What would you like to know?" },
+    { keys: ['nice site', 'cool site', 'love the site', 'great website', 'this is cool', 'looks good', 'nice website', 'love this'],
+      reply: "Thank you! This site is our own work, exactly the kind of thing we build for clients. If you want something like it, the Services page is a good place to start." },
+    { keys: ['weather', 'raining', 'sunny', 'temperature outside', 'forecast'],
+      reply: "I can't check live weather from here, but I'm happy to help with anything about your business or website. What's up?" },
+  ];
+
+  const ATLAS_DEFAULTS = [
+    "Good question. I'm sharpest on websites, getting your business online, and what Vision WRLD can do, but tell me a bit more and I'll help however I can.",
+    "Happy to help. Could you say a little more about what you're after? I'm especially good with web design, pricing, timelines, SEO, or growing your business.",
+    "I want to give you something useful, can you add a bit more detail? I can help with what we build, our process, costs, or general business questions.",
+  ];
+
   function localAtlas(q) {
     const s = q.toLowerCase().trim();
+    const words = new Set(s.replace(/[^a-z0-9$%]+/g, ' ').split(/\s+/).filter(Boolean));
+    const pick = (r) => Array.isArray(r) ? r[Math.floor(Math.random() * r.length)] : r;
     const now = new Date();
-    // --- general / off-topic: answer directly, no pitch ---
-    if (/\b(what|which|todays?|current).*(day|date)\b|what day is it|what'?s the date|date today/.test(s))
+
+    // ---- live / dynamic answers ----
+    if (/\b(what|which|todays?|current)\b.*\b(day|date)\b|what day is it|what'?s the date|date today|today'?s date/.test(s))
       return `It's ${now.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}.`;
-    if (/what.*time|time is it|current time/.test(s))
-      return `It's ${now.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })} right now (your local time).`;
-    if (/^(hi|hello|hey|yo|hiya|howdy|good (morning|afternoon|evening))\b|^sup\b/.test(s))
-      return "Hey! Good to see you. What can I help you with?";
-    if (/how are you|how's it going|hows it going|you good/.test(s))
-      return "Doing great, thanks for asking! What's on your mind?";
-    if (/\b(thanks|thank you|cheers|ty|appreciate)\b/.test(s))
-      return "Anytime! Anything else I can help with?";
-    if (/weather|raining|sunny|temperature outside/.test(s))
-      return "I can't peek at live weather from here, but I'm happy to help with just about anything else. What's up?";
-    // --- business advice: answer fully first, tie in online presence only where it fits ---
-    if (/grow my business|grow the business|grow your business|business grow|scale (my|the) business|more sales|increase sales|how do i grow/.test(s))
-      return "A few things move the needle most for a small business: nail down who your best customer is and speak directly to them, make it effortless to find and buy from you, and turn happy customers into repeat buyers and referrals (a simple follow-up or loyalty nudge goes a long way). Get the basics of being found right too: a Google Business Profile, real reviews, and a fast, credible website that converts the traffic you already get. That last part is where a lot of growth quietly leaks, and it's exactly what we help with at Vision WRLD if you ever want a hand.";
-    if (/more customers|get customers|find customers|attract customers|marketing|advertis|generate leads|lead gen|get clients/.test(s))
-      return "Start where your customers already are: claim and optimize your Google Business Profile, ask every happy customer for a review, and post consistently on the one channel your audience actually uses rather than spreading thin. Referrals and partnerships with complementary local businesses are underrated and free. Then make sure your website turns that attention into enquiries, fast load, clear offer, one obvious call to action. If the site is the weak link, that's our wheelhouse.";
-    if (/logo|brand|branding|brand identity|visual identity/.test(s))
-      return "A good logo is simple, legible at any size, and works in one color, skip the gradients and tiny detail. But a logo is the smallest part of a brand: consistency is what people remember. Pick one or two fonts, a tight color palette, and a clear voice, then use them everywhere, your signage, socials, and especially your website. Looking consistent and professional across all of those is what builds trust, and the website is usually where people judge you hardest.";
-    if (/social media|instagram|facebook|tiktok|linkedin|posting/.test(s))
-      return "Pick one platform where your customers actually hang out and do it well rather than being mediocre on five. Post consistently, show the real work and the people behind it, and always give a clear next step. One thing people forget: social profiles are rented land, the algorithm decides who sees you. Send that audience back to something you own, your website, where you control the experience and can actually convert them.";
-    if (/should i charge|how much.*charge|price my|pricing strategy|pricing my|what to charge|set my prices/.test(s))
-      return "Price on the value you deliver, not just your costs or what competitors charge. Anchor with a clear 'good / better / best' so most people pick the middle, and don't be afraid to be the premium option if your work backs it up, competing on cheapest is a race to the bottom. Show the value clearly (results, proof, testimonials) and the price feels fair. A polished website does a lot of that justifying for you before you ever talk.";
-    if (/stand out|differentiate|competitors|competition|beat my competitor/.test(s))
-      return "Pick a real point of difference and lean into it hard: a specific niche, a standout guarantee, faster turnaround, or a level of craft others skip. Be genuinely known for one thing rather than vaguely good at everything. Then make that difference obvious the moment someone lands on your website, that's where most businesses blur into the competition by looking like a template. Being memorable and credible online is half the battle.";
-    // --- web / business: this is where Vision WRLD fits ---
-    if (/wix|squarespace|webflow|godaddy|base44|wordpress|template|site builder/.test(s))
-      return "Those builders are fine for a hobby, a quick test, or a tight budget. The catch is they get slow and generic as you grow, limit your SEO, and lock you in, so serious businesses usually end up paying to rebuild later. A custom Vision WRLD site is built around your goals and scales without that rebuild.";
-    if (/price|cost|budget|how much|quote|estimate|\$/.test(s))
-      return "Pricing scales with scope, from around $300 for something simple up to $10,000 for a full build. Head to the Services page and drag the slider to your scope for a live estimate.";
-    if (/how long|timeline|how fast|deadline|turnaround|when can/.test(s))
-      return "It depends on scope: a simple site is usually a week or two, mid-size builds run a few weeks, and larger projects are scoped on a first call. We'll give you an exact timeline up front.";
-    if (/seo|rank|ranking|google|search engine/.test(s))
-      return "SEO starts with speed, clean structure, and pages that answer real questions. We build that in from day one rather than bolting it on later. There's a primer in our Journal if you want the basics.";
-    if (/website|web site|web design|build a site|need a site|online|web presence|landing page|ecommerce|online store|business|bakery|shop|portfolio|redesign/.test(s))
-      return "Love it, that's exactly what we do. Vision WRLD builds custom, fast sites designed around your actual goals. Tell me a bit more about what you're after, or jump to the Services page to shape a quote and the Contact page to book a free consultation.";
-    // --- genuine catch-all: stay helpful, do NOT pitch ---
-    return "Happy to help with that. Could you tell me a little more about what you're looking for?";
+    if (/\bwhat\b.*\btime\b|time is it|current time|the time right now/.test(s))
+      return `It's ${now.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })} your local time.`;
+    const math = s.match(/(-?\d+(?:\.\d+)?)\s*([x*+\/-])\s*(-?\d+(?:\.\d+)?)/);
+    if (math && /(what|calc|equals?|=|plus|times|minus|divided|multipl|\d\s*[x*+\/-]\s*\d)/.test(s)) {
+      const a = +math[1], op = math[2], b = +math[3];
+      const r = (op === 'x' || op === '*') ? a * b : op === '+' ? a + b : op === '-' ? a - b : (b !== 0 ? a / b : NaN);
+      if (!Number.isNaN(r)) return `That's ${Math.round(r * 1000) / 1000}.`;
+    }
+
+    // ---- scored knowledge-base match ----
+    const has = (k) => {
+      if (k.includes(' ')) return s.includes(k);
+      if (words.has(k)) return true;
+      if (words.has(k + 's')) return true;            // simple plural
+      if (k.endsWith('s') && words.has(k.slice(0, -1))) return true;
+      return false;
+    };
+    let best = null, bestScore = 0;
+    for (const e of ATLAS_KB) {
+      let sc = 0;
+      for (const k of e.keys) if (has(k)) sc += k.includes(' ') ? 2 : 1;
+      if (sc > bestScore) { bestScore = sc; best = e; }
+    }
+    if (best && bestScore >= 1) return pick(best.reply);
+    return pick(ATLAS_DEFAULTS);
   }
 
   /* ════════════════ INIT ════════════════ */
