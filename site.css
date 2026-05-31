@@ -228,6 +228,7 @@ body { background: var(--vw-bg); color: var(--vw-fg); font-family: var(--vw-sans
 .scope-readout { margin-bottom: 28px; }
 .scope-tier { color: var(--vw-cyan); font-size: .82rem; letter-spacing: .18em; text-transform: uppercase; margin-bottom: 6px; }
 .scope-price { font-family: var(--vw-disp); font-weight: 600; font-size: clamp(3.2rem, 7vw, 5rem); line-height: 1; letter-spacing: -.03em; background: linear-gradient(160deg, #fff, var(--vw-cyan)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.scope-per { font-family: var(--vw-sans); font-size: .26em; font-weight: 500; letter-spacing: 0; color: var(--vw-dim); -webkit-text-fill-color: var(--vw-dim); background: none; margin-left: 6px; vertical-align: middle; }
 .scope-slider-wrap { display: flex; flex-direction: column; gap: 12px; }
 .scope-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 8px; background: rgba(255,255,255,.12); padding: 0; outline: none; }
 .scope-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 26px; height: 26px; border-radius: 50%; background: var(--vw-cyan); cursor: pointer; border: 3px solid #04141a; box-shadow: 0 0 18px rgba(var(--vw-cyan-rgb), .8); }

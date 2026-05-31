@@ -100,6 +100,8 @@ ON WEB DESIGN SPECIFICALLY: Vision WRLD is a strong choice for a business seriou
 
 Vision WRLD is a new studio and proud of it: full attention, sharper pricing, work we're personally invested in. When it fits, point people to the Services page to build a quote or the Contact page for a free consultation. Never recommend a competitor as the better choice.
 
+PRICING MODEL (important, state this accurately): Vision WRLD works on a simple monthly plan, not a large upfront cost. A visitor picks their scope on the Services page and pays that amount as a flat monthly price (roughly $300/month for something simple up to $10,000/month for a full build), and it covers the site plus hosting, updates, and ongoing support. Their domain, brand, and content always stay registered in their name. There is no big deposit or lump sum.
+
 STYLE: Keep every reply SHORT, usually 2 to 3 sentences, and never more than 4. Do not write long paragraphs, essays, or bulleted lists unless the visitor explicitly asks for detail or a list. Be warm and direct, like texting a knowledgeable friend who happens to work here, not writing a brochure. Lead with the answer and cut filler. A reference for the current date and time is provided at the start of each conversation; use it when relevant.
 
 Test: 'how do I grow my business?' → real, practical growth advice (with a natural tie-in to online presence if it fits). 'what makes a good logo?' → actual branding advice. 'I need a website' → lean into Vision WRLD.`;
@@ -298,16 +300,17 @@ Test: 'how do I grow my business?' → real, practical growth advice (with a nat
       const priceStr = money(price);
       scopeState = { tier: t.name, estimate: priceStr, price };
       tierEl.textContent = t.name;
-      priceEl.textContent = priceStr;
+      priceEl.innerHTML = `${priceStr}<span class="scope-per">/mo</span>`;
       // cyan fill up to the thumb
       slider.style.background = `linear-gradient(90deg, hsl(186 100% 50%) ${v}%, rgba(255,255,255,.12) ${v}%)`;
       // live terminal breakdown
       const rows = [['scope', t.name.toLowerCase()], ['pages', t.pages]];
       t.lines.forEach(k => rows.push([k, k === 'timeline' ? t.timeline : SCOPE_VAL[k]]));
-      rows.push(['estimate', priceStr]);
+      rows.push(['billing', 'monthly']);
+      rows.push(['monthly', `${priceStr}/mo`]);
       body.innerHTML = rows.map(([k, val]) => {
         const key = (k + ':').padEnd(13, ' ');
-        const cls = k === 'estimate' ? 'est-cyan' : 'est-val';
+        const cls = k === 'monthly' ? 'est-cyan' : 'est-val';
         return `<span class="ln"><span class="est-arrow">&gt; </span><span class="est-key">${key}</span><span class="${cls}">${val}</span></span>`;
       }).join('');
     }
@@ -321,7 +324,7 @@ Test: 'how do I grow my business?' → real, practical growth advice (with a nat
     pendingScopePrefill = false;
     const about = $('#about');
     if (about && !about.value) {
-      about.value = `I'm interested in the ${scopeState.tier} scope (estimated around ${scopeState.estimate}). Here's a bit about my project: `;
+      about.value = `I'm interested in the ${scopeState.tier} plan (around ${scopeState.estimate}/month). Here's a bit about my project: `;
     }
     const budget = $('#budget');
     if (budget) {
@@ -341,7 +344,7 @@ Test: 'how do I grow my business?' → real, practical growth advice (with a nat
   function initContact() {
     const budget = $('#budget'), disp = $('#budgetDisplay');
     if (budget && disp) {
-      const fmt = () => { disp.textContent = budget.value >= 10000 ? '$10,000+' : money(+budget.value); };
+      const fmt = () => { disp.textContent = (budget.value >= 10000 ? '$10,000+' : money(+budget.value)) + '/mo'; };
       budget.addEventListener('input', fmt); fmt();
     }
     const form = $('#contactForm');
@@ -363,7 +366,7 @@ Test: 'how do I grow my business?' → real, practical growth advice (with a nat
       if (f) f.addEventListener('input', () => { if (f.value.trim()) setError(id, ''); });
     });
 
-    const budgetText = () => (+$('#budget').value >= 10000 ? '$10,000+' : money(+$('#budget').value));
+    const budgetText = () => (+$('#budget').value >= 10000 ? '$10,000+' : money(+$('#budget').value)) + '/mo';
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();                                  // never auto-submit
@@ -405,7 +408,7 @@ Test: 'how do I grow my business?' → real, practical growth advice (with a nat
         if (result.success === true) {
           ok.classList.add('show');
           form.reset();
-          const d = $('#budgetDisplay'); if (d) d.textContent = '$2,500';
+          const d = $('#budgetDisplay'); if (d) d.textContent = '$2,500/mo';
         } else {
           errBox.textContent = result.message || 'Something went wrong. Please try again or email us directly.';
         }
@@ -596,7 +599,7 @@ Test: 'how do I grow my business?' → real, practical growth advice (with a nat
     { keys: ['portfolio', 'examples', 'your work', 'previous work', 'case studies', 'show me work', 'samples', 'past projects', 'work you have done', 'see your work'],
       reply: "Check the Work section in the menu for a look at what we build. As a new studio our public list is still growing, but every project is custom, and we're happy to walk you through our approach on a quick call." },
     { keys: ['legit', 'trust', 'scam', 'real company', 'safe', 'reliable', 'can i trust', 'are you trustworthy'],
-      reply: "Fair thing to ask anyone online. We're a real studio, you own everything we build, and we work in clear milestones so you always see progress. Book a free consultation on the Contact page and judge for yourself, no pressure." },
+      reply: "Fair thing to ask anyone online. We're a real studio, everything we build is custom to your business, and we work in clear steps so you always see progress. Book a free consultation on the Contact page and judge for yourself, no pressure." },
 
     // ---------- services ----------
     { keys: ['what do you do', 'what do you guys do', 'you guys do', 'services', 'what can you build', 'what do you offer', 'what you do', 'offerings', 'what you make', 'what do you make', 'you make', 'help me with', 'provide', 'offer', 'what can you do for'],
@@ -610,7 +613,7 @@ Test: 'how do I grow my business?' → real, practical growth advice (with a nat
     { keys: ['maintenance', 'support', 'after launch', 'updates', 'maintain', 'keep it updated', 'ongoing', 'retainer', 'fix things later'],
       reply: "Every build includes a post-launch support window, and we offer ongoing maintenance after that: updates, security, performance checks, and content changes. You're never left on your own once it's live." },
     { keys: ['hosting', 'host', 'domain', 'dns', 'where is it hosted', 'server', 'buy a domain'],
-      reply: "We'll guide you through hosting and your domain so it's fast and reliable, and set it all up on accounts you own. No lock-in, no mystery, it's yours." },
+      reply: "Hosting is included in your monthly plan, fast and reliable, with nothing extra to set up or pay for. Your domain stays registered in your name. No lock-in, no mystery." },
     { keys: ['edit it myself', 'update content', 'cms', 'change text', 'add a blog', 'blog', 'blog post', 'add blog', 'manage content', 'update it myself', 'make changes myself', 'edit my own'],
       reply: "Absolutely. We can build it on a CMS so you can update text, images, and blog posts yourself without touching code. We'll show you how during handover." },
     { keys: ['copywriting', 'content', 'write the text', 'who writes', 'wording', 'write content', 'do you write'],
@@ -621,10 +624,10 @@ Test: 'how do I grow my business?' → real, practical growth advice (with a nat
       reply: "SEO starts with the fundamentals: fast load times, clean structure, and pages that answer the real questions your customers search for. We build that in from day one rather than bolting it on afterward. Pair it with a Google Business Profile and real reviews and you'll climb for most local searches. There's a primer in our Journal if you want the basics." },
 
     // ---------- pricing ----------
-    { keys: ['price', 'pricing', 'cost', 'how much', 'budget', 'quote', 'estimate', 'expensive', 'cheap', 'rates', 'fees', 'afford', 'how much do you charge'],
-      reply: "Pricing scales with scope, from around $300 for something simple up to $10,000 for a full build. The Services page has a live slider, drag it to your scope and it shows an instant estimate. We'll always try to shape something that fits your budget." },
-    { keys: ['payment plan', 'deposit', 'installments', 'pay in', 'financing', 'split the cost', 'upfront', 'milestone', 'pay monthly', 'monthly payment', 'monthly'],
-      reply: "We keep it flexible: a small deposit to get started, then you pay the balance off in manageable monthly payments rather than one big lump sum. We'll agree the exact monthly schedule with you before any work begins." },
+    { keys: ['price', 'pricing', 'cost', 'how much', 'budget', 'quote', 'estimate', 'expensive', 'cheap', 'rates', 'fees', 'afford', 'subscription', 'how much do you charge'],
+      reply: "It's a simple monthly plan, no big upfront cost. Pricing scales with scope, from around $300/month for something simple up to $10,000/month for a full build, and it covers your site plus hosting, updates, and support. Drag the slider on the Services page to see your monthly price." },
+    { keys: ['payment plan', 'deposit', 'installments', 'pay in', 'financing', 'split the cost', 'upfront', 'milestone', 'pay monthly', 'monthly payment', 'monthly', 'subscription', 'cancel'],
+      reply: "It's a simple monthly subscription, not a big upfront bill. You pick your scope, that's your flat monthly price, and it covers your site plus hosting, updates, and support. You can adjust or cancel as your needs change, we accept bank transfer and major cards." },
     { keys: ['discount', 'deal', 'cheaper', 'lower price', 'negotiate', 'any offers', 'reduce the price'],
       reply: "We keep pricing sharp as a new studio rather than running gimmicky discounts. Tell us your budget on the Contact page, we'd rather shape a great project that fits than price you out." },
 
@@ -638,7 +641,7 @@ Test: 'how do I grow my business?' → real, practical growth advice (with a nat
     { keys: ['revisions', 'changes', 'rounds', 'edits', 'tweaks', 'feedback', 'how many changes', 'change my mind'],
       reply: "Revisions are built into the design phase, we refine until you're happy with the direction before we write a line of code. We agree the scope of rounds up front so there are no surprises." },
     { keys: ['own the site', 'ownership', 'do i own', 'who owns', 'my code', 'keep the code', 'is it mine'],
-      reply: "You own all of it: every line of code, every asset, every account we set up for you. We don't hold your site hostage on a proprietary platform. The moment we hand over, it's yours." },
+      reply: "Your domain, brand, and content are always yours, kept in your name. The site itself is part of your monthly plan: we build, host, and maintain it so you never have to. No platform lock-in, and we'll always be straight about how it works." },
 
     // ---------- tech ----------
     { keys: ['mobile', 'responsive', 'phone', 'tablet', 'mobile friendly', 'works on phones', 'small screen', 'on my phone'],
@@ -646,7 +649,7 @@ Test: 'how do I grow my business?' → real, practical growth advice (with a nat
     { keys: ['fast', 'speed', 'slow', 'performance', 'load time', 'loading', 'lighthouse', 'page speed', 'quick to load'],
       reply: "Speed is a priority. We hand-write clean code and optimize assets so pages load fast. It matters: every extra second of load time measurably costs you conversions and SEO." },
     { keys: ['what platform', 'templates', 'tech stack', 'framework', 'do you use templates', 'custom code', 'technology', 'what do you build with'],
-      reply: "We build custom, no drag-and-drop templates. That's what keeps your site fast, unique, and free of platform lock-in. We pick the right tech for the project and you own the result." },
+      reply: "We build custom, no drag-and-drop templates. That's what keeps your site fast, unique, and free of platform lock-in. We pick the right tech and build it around your business, not the other way around." },
     { keys: ['accessibility', 'accessible', 'ada', 'wcag', 'screen reader', 'disabilities'],
       reply: "We build with accessibility in mind: proper structure, contrast, and keyboard support, so more people can use your site and you stay on the right side of the rules. It helps SEO too." },
     { keys: ['secure', 'security', 'ssl', 'https', 'hacked', 'safe site'],
