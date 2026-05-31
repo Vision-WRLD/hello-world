@@ -1,19 +1,21 @@
 /* ============================================================
    Cloudflare Pages Function  ->  route: /api/atlas
-   Proxies the ATLAS chatbot to Google Gemini.
-   The API key NEVER reaches the browser: it is read from the
-   GEMINI_API_KEY secret (set in the Cloudflare dashboard) and
-   used only here, server-side. It is never logged or returned.
+   Powers ATLAS with Cloudflare Workers AI (built-in, free tier).
+   No external API key: it uses the bound `AI` resource on your
+   own Cloudflare account. Add the binding in the dashboard:
+   Pages project -> Settings -> Functions -> Bindings ->
+   Add -> Workers AI -> Variable name: AI
    ============================================================ */
 
-// Current free-tier flash model. If Google retires it, change this one line
-// (e.g. 'gemini-2.0-flash-001' or 'gemini-1.5-flash').
-const MODEL = 'gemini-2.0-flash-lite';
+// Model. 8B is fast and easy on the free daily allowance.
+// For higher-quality answers, swap to '@cf/meta/llama-3.3-70b-instruct-fp8-fast'
+// (better, but uses more of the free Neurons per day).
+const MODEL = '@cf/meta/llama-3.1-8b-instruct';
 
 // --- simple per-IP rate limit (best-effort, in-memory per worker isolate) ---
-const RATE_LIMIT = 15;        // max requests...
-const WINDOW_MS = 60_000;     // ...per IP per 60s
-const HITS = new Map();       // ip -> [timestamps]
+const RATE_LIMIT = 20;
+const WINDOW_MS = 60_000;
+const HITS = new Map();
 
 function corsHeaders(origin) {
   return {
@@ -23,7 +25,6 @@ function corsHeaders(origin) {
     'Access-Control-Max-Age': '86400',
   };
 }
-
 function jsonResponse(obj, status, origin) {
   return new Response(JSON.stringify(obj), {
     status,
@@ -31,7 +32,6 @@ function jsonResponse(obj, status, origin) {
   });
 }
 
-// CORS preflight
 export async function onRequestOptions({ request }) {
   return new Response(null, { status: 204, headers: corsHeaders(request.headers.get('Origin')) });
 }
@@ -39,8 +39,9 @@ export async function onRequestOptions({ request }) {
 export async function onRequestPost({ request, env }) {
   const origin = request.headers.get('Origin');
   try {
-    if (!env.GEMINI_API_KEY) {
-      return jsonResponse({ error: 'ATLAS is not configured yet (missing API key).' }, 500, origin);
+    if (!env.AI) {
+      // binding not added yet -> frontend falls back to the canned engine
+      return jsonResponse({ error: 'Workers AI binding (AI) is not configured.' }, 500, origin);
     }
 
     // ---- rate limit ----
@@ -48,63 +49,37 @@ export async function onRequestPost({ request, env }) {
     const now = Date.now();
     const recent = (HITS.get(ip) || []).filter((t) => now - t < WINDOW_MS);
     if (recent.length >= RATE_LIMIT) {
-      return jsonResponse({ error: 'You are sending messages too quickly. Please wait a moment and try again.' }, 429, origin);
+      return jsonResponse({ error: 'You are sending messages too quickly. Please wait a moment.' }, 429, origin);
     }
     recent.push(now);
     HITS.set(ip, recent);
 
     // ---- read frontend payload ----
     const body = await request.json().catch(() => ({}));
-    const messages = Array.isArray(body.messages) ? body.messages : [];
     const system = typeof body.system === 'string' ? body.system : '';
-    if (!messages.length) {
-      return jsonResponse({ error: 'No message to send.' }, 400, origin);
-    }
+    const incoming = Array.isArray(body.messages) ? body.messages : [];
+    if (!incoming.length) return jsonResponse({ error: 'No message to send.' }, 400, origin);
 
-    // ---- map chat history -> Gemini "contents" (assistant -> model) ----
-    const contents = messages
-      .filter((m) => m && typeof m.content === 'string' && m.content.trim())
-      .map((m) => ({
-        role: m.role === 'assistant' || m.role === 'model' ? 'model' : 'user',
-        parts: [{ text: m.content }],
-      }));
-
-    // ---- inject current date/time into the system instruction (server-side) ----
+    // ---- build the chat messages: system + full history ----
     const dateLine = 'Current date and time for reference: ' + new Date().toUTCString();
-    const systemText = (system ? system + '\n\n' : '') + dateLine;
-
-    const geminiPayload = {
-      contents,
-      systemInstruction: { parts: [{ text: systemText }] },
-      generationConfig: { temperature: 0.7, maxOutputTokens: 1024 },
-    };
-
-    // ---- forward to Gemini (key only in the URL, server-side) ----
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${env.GEMINI_API_KEY}`;
-    const upstream = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(geminiPayload),
-    });
-
-    if (!upstream.ok) {
-      // Google's error body never contains the key, but trim it just in case.
-      const detail = (await upstream.text().catch(() => '')).slice(0, 300);
-      return jsonResponse({ error: 'ATLAS upstream error.', status: upstream.status, detail }, 502, origin);
+    const messages = [{ role: 'system', content: (system ? system + '\n\n' : '') + dateLine }];
+    for (const m of incoming) {
+      if (!m || typeof m.content !== 'string' || !m.content.trim()) continue;
+      messages.push({
+        role: m.role === 'assistant' || m.role === 'model' ? 'assistant' : 'user',
+        content: m.content,
+      });
     }
+    // keep the prompt bounded (last ~16 turns)
+    const trimmed = [messages[0], ...messages.slice(1).slice(-16)];
 
-    const data = await upstream.json();
-    const reply = data?.candidates?.[0]?.content?.parts?.map((p) => p.text || '').join('').trim();
-
-    if (!reply) {
-      // e.g. safety block or empty candidate
-      const reason = data?.promptFeedback?.blockReason || data?.candidates?.[0]?.finishReason || 'empty';
-      return jsonResponse({ error: 'ATLAS had no reply.', reason }, 502, origin);
-    }
+    // ---- run the model on Cloudflare Workers AI ----
+    const out = await env.AI.run(MODEL, { messages: trimmed, max_tokens: 800, temperature: 0.6 });
+    const reply = (out && (out.response || out.result || '')).toString().trim();
+    if (!reply) return jsonResponse({ error: 'Empty reply from model.' }, 502, origin);
 
     return jsonResponse({ reply }, 200, origin);
   } catch (err) {
-    // never expose internals / the key
-    return jsonResponse({ error: 'ATLAS proxy failed. Please try again.' }, 500, origin);
+    return jsonResponse({ error: 'ATLAS model call failed.', detail: String(err && err.message || err).slice(0, 200) }, 500, origin);
   }
 }

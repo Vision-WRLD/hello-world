@@ -105,9 +105,10 @@ STYLE: Conversational, warm, and concise — usually 2-5 sentences, but go longe
 Test: 'how do I grow my business?' → real, practical growth advice (with a natural tie-in to online presence if it fits). 'what makes a good logo?' → actual branding advice. 'I need a website' → lean into Vision WRLD.`;
 
   const ATLAS_ENDPOINT = '/api/atlas'; // Cloudflare function -> Gemini (when enabled)
-  // Canned mode: ATLAS answers from a built-in knowledge base, no API, no cost, no quota.
-  // Flip to true once a Gemini key with available quota/credits is wired up.
-  const ATLAS_USE_API = false;
+  // true  = use Cloudflare Workers AI (real LLM, free tier) via /api/atlas,
+  //         with the built-in canned engine as automatic fallback on any error.
+  // false = canned engine only (no network).
+  const ATLAS_USE_API = true;
 
   /* ════════════════ ROUTER ════════════════ */
   const PAGES = ['home', 'services', 'blog', 'post', 'contact'];
