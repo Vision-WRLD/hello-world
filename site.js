@@ -100,7 +100,7 @@ ON WEB DESIGN SPECIFICALLY: Vision WRLD is a strong choice for a business seriou
 
 Vision WRLD is a new studio and proud of it: full attention, sharper pricing, work we're personally invested in. When it fits, point people to the Services page to build a quote or the Contact page for a free consultation. Never recommend a competitor as the better choice.
 
-STYLE: Conversational, warm, and concise — usually 2-5 sentences, but go longer when a business question genuinely needs a real answer (e.g. listing a few concrete growth tactics). Sound like a smart, generous advisor, not a brochure. A reference for the current date/time will be provided at the start of each conversation; use it when relevant.
+STYLE: Keep every reply SHORT, usually 2 to 3 sentences, and never more than 4. Do not write long paragraphs, essays, or bulleted lists unless the visitor explicitly asks for detail or a list. Be warm and direct, like texting a knowledgeable friend who happens to work here, not writing a brochure. Lead with the answer and cut filler. A reference for the current date and time is provided at the start of each conversation; use it when relevant.
 
 Test: 'how do I grow my business?' → real, practical growth advice (with a natural tie-in to online presence if it fits). 'what makes a good logo?' → actual branding advice. 'I need a website' → lean into Vision WRLD.`;
 
@@ -623,8 +623,8 @@ Test: 'how do I grow my business?' → real, practical growth advice (with a nat
     // ---------- pricing ----------
     { keys: ['price', 'pricing', 'cost', 'how much', 'budget', 'quote', 'estimate', 'expensive', 'cheap', 'rates', 'fees', 'afford', 'how much do you charge'],
       reply: "Pricing scales with scope, from around $300 for something simple up to $10,000 for a full build. The Services page has a live slider, drag it to your scope and it shows an instant estimate. We'll always try to shape something that fits your budget." },
-    { keys: ['payment plan', 'deposit', 'installments', 'pay in', 'financing', 'split the cost', 'upfront', 'milestone', 'pay monthly'],
-      reply: "We usually work on a deposit upfront and the balance on delivery, and we can split larger projects into milestone payments. We'll lay it all out clearly before anything starts." },
+    { keys: ['payment plan', 'deposit', 'installments', 'pay in', 'financing', 'split the cost', 'upfront', 'milestone', 'pay monthly', 'monthly payment', 'monthly'],
+      reply: "We keep it flexible: a small deposit to get started, then you pay the balance off in manageable monthly payments rather than one big lump sum. We'll agree the exact monthly schedule with you before any work begins." },
     { keys: ['discount', 'deal', 'cheaper', 'lower price', 'negotiate', 'any offers', 'reduce the price'],
       reply: "We keep pricing sharp as a new studio rather than running gimmicky discounts. Tell us your budget on the Contact page, we'd rather shape a great project that fits than price you out." },
 

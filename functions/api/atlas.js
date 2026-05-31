@@ -74,7 +74,7 @@ export async function onRequestPost({ request, env }) {
     const trimmed = [messages[0], ...messages.slice(1).slice(-16)];
 
     // ---- run the model on Cloudflare Workers AI ----
-    const out = await env.AI.run(MODEL, { messages: trimmed, max_tokens: 800, temperature: 0.6 });
+    const out = await env.AI.run(MODEL, { messages: trimmed, max_tokens: 300, temperature: 0.5 });
     const reply = (out && (out.response || out.result || '')).toString().trim();
     if (!reply) return jsonResponse({ error: 'Empty reply from model.' }, 502, origin);
 

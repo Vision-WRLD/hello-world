@@ -234,6 +234,8 @@ body { background: var(--vw-bg); color: var(--vw-fg); font-family: var(--vw-sans
 .scope-slider::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: var(--vw-cyan); cursor: pointer; border: 3px solid #04141a; box-shadow: 0 0 18px rgba(var(--vw-cyan-rgb), .8); }
 .scope-stops { display: flex; justify-content: space-between; font-family: var(--vw-mono); font-size: .74rem; letter-spacing: .04em; color: var(--vw-faint); }
 .scope-cta { align-self: flex-start; margin-top: 32px; }
+.scope-note { margin-top: 16px; color: var(--vw-dim); font-size: .9rem; line-height: 1.5; max-width: 42ch; }
+.scope-note .mono { margin-right: 6px; }
 .scope-terminal { border-radius: 12px; box-shadow: 0 0 50px -16px rgba(var(--vw-cyan-rgb), .22); }
 .scope-terminal .vw-term__body { min-height: 230px; font-size: .9rem; }
 .est-arrow { color: rgba(245,243,240,.45); }
