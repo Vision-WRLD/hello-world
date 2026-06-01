@@ -113,7 +113,7 @@ Test: 'how do I grow my business?' → real, practical growth advice (with a nat
   const ATLAS_USE_API = true;
 
   /* ════════════════ ROUTER ════════════════ */
-  const PAGES = ['home', 'services', 'blog', 'post', 'contact'];
+  const PAGES = ['home', 'services', 'blog', 'post', 'contact', 'privacy', 'terms'];
   let selectedNeed = '';
 
   function go(page, opts = {}) {

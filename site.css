@@ -339,7 +339,22 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border: none;
 .trust-icon { font-size: 1.1rem; }
 .trust-note { color: var(--vw-faint); font-size: .85rem; margin-left: auto; font-style: italic; }
 
+/* ════════════════ LEGAL PAGES ════════════════ */
+.legal-section { padding: 0 0 clamp(60px, 9vw, 110px); }
+.legal { max-width: 760px; margin-inline: auto; }
+.legal__meta { color: var(--vw-faint); font-size: .8rem; letter-spacing: .04em; margin-bottom: 30px; }
+.legal p { color: var(--vw-sub); line-height: 1.8; margin-bottom: 18px; }
+.legal h2 { font-family: var(--vw-disp); font-weight: 600; font-size: 1.5rem; letter-spacing: -.01em; margin: 38px 0 12px; }
+.legal ul { margin: 0 0 18px 20px; color: var(--vw-sub); line-height: 1.75; display: flex; flex-direction: column; gap: 10px; }
+.legal a { color: var(--vw-cyan); }
+.legal a:hover { text-decoration: underline; }
+.legal strong { color: var(--vw-fg); font-weight: 600; }
+.legal .btn { margin-top: 18px; }
+
 /* ════════════════ FOOTER ════════════════ */
+.footer__legal { display: inline-flex; gap: 18px; }
+.footer__legal a { color: var(--vw-faint); transition: color .25s; }
+.footer__legal a:hover { color: var(--vw-cyan); }
 .footer { border-top: 1px solid var(--vw-line); padding: clamp(50px, 7vw, 90px) 0 36px; margin-top: 40px; }
 .footer__top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 30px; padding-bottom: 40px; border-bottom: 1px solid var(--vw-line); }
 .footer__brand .logo { font-family: var(--vw-disp); font-weight: 600; font-size: 1.05rem; }
